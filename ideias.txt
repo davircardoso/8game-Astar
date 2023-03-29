@@ -1,0 +1,6 @@
+Inicialmente:
+
+- Manhattan Distance, menor distancia que será percorrida.
+- A função em relação ao valor para o jogo dos 8 é f = g + h.
+- G é a profundidade do nodo, primeiro, segundo e assim sucessivamente.
+- H é a quantidade de 'números' fora do lugar em relação ao inicial.
