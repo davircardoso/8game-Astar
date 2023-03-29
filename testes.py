@@ -34,6 +34,8 @@
 lista = [[3,2,1,0],[1,2,3,4]]
 
 for i in range(len(lista)):
+    print(i)
     for k in lista[i]:
-        print(k)
-        print(lista[i].index(k))
+        #print(k)
+        #print(lista[i].index(k))
+        a = 1
