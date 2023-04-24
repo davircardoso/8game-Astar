@@ -71,19 +71,17 @@ class Busca:
                     distancia += abs(linha_zero - i) + abs(col_zero - j)
         return distancia
     
-    def distancia_manhattan_melhorada(self, father):
-        dist = 0
-        posicoes = {}
+    def distancia_euclidiana(self, father):
+        distancia = 0
         for i in range(len(father)):
             for j in range(len(father[0])):
-                if father[i][j] != 0:
-                    posicoes[father[i][j]] = (i, j)
-        for i in range(len(father)):
-            for j in range(len(father[0])):
-                if father[i][j] != 0:
-                    final_i, final_j = posicoes[father[i][j]]
-                    dist += abs(final_i - i) + abs(final_j - j)
-        return dist
+                preco = father[i][j]
+                if preco != 0:
+                    for x in range(len(father)):
+                        for y in range(len(father[0])):
+                            if self.goal[x][y] == preco:
+                                distancia += ((i - x) ** 2 + (j - y) ** 2) ** 0.5
+        return distancia
 
     def a_estrela_manhattan(self, father):
         linhas = len(father)
@@ -125,7 +123,7 @@ class Busca:
                 novo_estado[linha_zero][col_zero], novo_estado[linha_zero+1][col_zero] = novo_estado[linha_zero+1][col_zero], novo_estado[linha_zero][col_zero]
                 if str(novo_estado) not in explorados:
                     custo = self.distancia_manhattan(novo_estado) + len(movimentos) + 1
-                    abertos.append((novo_estado, movimentos + [('Pra cima', novo_estado, custo)]))
+                    abertos.append((novo_estado, movimentos + [('Pra baixo', novo_estado, custo)]))
                   
                 
             # Move pra esquerda
@@ -134,7 +132,7 @@ class Busca:
                 novo_estado[linha_zero][col_zero], novo_estado[linha_zero][col_zero-1] = novo_estado[linha_zero][col_zero-1], novo_estado[linha_zero][col_zero]
                 if str(novo_estado) not in explorados:
                     custo = self.distancia_manhattan(novo_estado) + len(movimentos) + 1
-                    abertos.append((novo_estado, movimentos + [('Pra cima', novo_estado, custo)]))
+                    abertos.append((novo_estado, movimentos + [('Pra esquerda', novo_estado, custo)]))
                 
             # Move pra direita
             if col_zero < 2:
@@ -142,11 +140,11 @@ class Busca:
                 novo_estado[linha_zero][col_zero], novo_estado[linha_zero][col_zero+1] = novo_estado[linha_zero][col_zero+1], novo_estado[linha_zero][col_zero]
                 if str(novo_estado) not in explorados:
                     custo = self.distancia_manhattan(novo_estado) + len(movimentos) + 1
-                    abertos.append((novo_estado, movimentos + [('Pra cima', novo_estado, custo)]))
+                    abertos.append((novo_estado, movimentos + [('Pra direita', novo_estado, custo)]))
             
         return None
     
-    def a_estrela_heuristica_complexa(self, father):
+    def a_estrela_euclidiana(self, father):
         linhas = len(father)
         colunas = len(father[0])
         linha_zero = 0
@@ -154,7 +152,7 @@ class Busca:
         explorados = set()
         abertos = [(father, [])]        
         while abertos:
-            abertos.sort(key=lambda estado: self.distancia_manhattan_melhorada(estado[0]) + len(estado[1]) + 1)
+            abertos.sort(key=lambda estado: self.distancia_euclidiana(estado[0]) + len(estado[1]) + 1)
             estado_atual, movimentos = abertos.pop(0)
             explorados.add(str(estado_atual))
             
@@ -176,7 +174,7 @@ class Busca:
                 novo_estado = [linha[:] for linha in estado_atual]
                 novo_estado[linha_zero][col_zero], novo_estado[linha_zero-1][col_zero] = novo_estado[linha_zero-1][col_zero], novo_estado[linha_zero][col_zero]
                 if str(novo_estado) not in explorados:
-                    custo = self.distancia_manhattan_melhorada(novo_estado) + len(movimentos) + 1
+                    custo = self.distancia_euclidiana(novo_estado) + len(movimentos) + 1
                     abertos.append((novo_estado, movimentos + [('Pra cima', novo_estado, custo) ]))
                 
                 
@@ -185,8 +183,8 @@ class Busca:
                 novo_estado = [linha[:] for linha in estado_atual]
                 novo_estado[linha_zero][col_zero], novo_estado[linha_zero+1][col_zero] = novo_estado[linha_zero+1][col_zero], novo_estado[linha_zero][col_zero]
                 if str(novo_estado) not in explorados:
-                    custo = self.distancia_manhattan_melhorada(novo_estado) + len(movimentos) + 1
-                    abertos.append((novo_estado, movimentos + [('Pra cima', novo_estado, custo)]))
+                    custo = self.distancia_euclidiana(novo_estado) + len(movimentos) + 1
+                    abertos.append((novo_estado, movimentos + [('Pra baixo', novo_estado, custo)]))
                   
                 
             # Move pra esquerda
@@ -194,15 +192,15 @@ class Busca:
                 novo_estado = [linha[:] for linha in estado_atual]
                 novo_estado[linha_zero][col_zero], novo_estado[linha_zero][col_zero-1] = novo_estado[linha_zero][col_zero-1], novo_estado[linha_zero][col_zero]
                 if str(novo_estado) not in explorados:
-                    custo = self.distancia_manhattan_melhorada(novo_estado) + len(movimentos) + 1
-                    abertos.append((novo_estado, movimentos + [('Pra cima', novo_estado, custo)]))
+                    custo = self.distancia_euclidiana(novo_estado) + len(movimentos) + 1
+                    abertos.append((novo_estado, movimentos + [('Pra esquerda', novo_estado, custo)]))
                 
             # Move pra direita
             if col_zero < 2:
                 novo_estado = [linha[:] for linha in estado_atual]
                 novo_estado[linha_zero][col_zero], novo_estado[linha_zero][col_zero+1] = novo_estado[linha_zero][col_zero+1], novo_estado[linha_zero][col_zero]
                 if str(novo_estado) not in explorados:
-                    custo = self.distancia_manhattan_melhorada(novo_estado) + len(movimentos) + 1
-                    abertos.append((novo_estado, movimentos + [('Pra cima', novo_estado, custo)]))
+                    custo = self.distancia_euclidiana(novo_estado) + len(movimentos) + 1
+                    abertos.append((novo_estado, movimentos + [('Pra direita', novo_estado, custo)]))
             
         return None
